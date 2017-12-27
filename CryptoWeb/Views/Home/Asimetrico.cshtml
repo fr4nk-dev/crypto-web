@@ -1,0 +1,84 @@
+﻿
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading"><h1>Pruebas de encriptación RSA (2048 bits) y padding PKCS1 v1.5 (*)</h1></div>
+        <div class="panel-body">
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label>Llave privada</label><br />
+                        <textarea rows="15" style="width:100%">@ViewBag.PrivateKey </textarea>
+                    </div>
+                    <div class="col-lg-6">
+                        <label>Llave Pública</label><br />
+                        <textarea rows="15" style="width: 100%">@ViewBag.PublicKey </textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading"><h3>RSA Test</h3></div>
+        <div class="panel-body">
+            <div class="col-lg-5">
+                <label for="input">Texto a Encriptar:</label><br />
+                <textarea id="input" name="input" style="width: 100%" rows="4"></textarea>
+            </div>
+            <div class="col-lg-2">
+                <label>&nbsp;</label><br />
+                <button id="execute" class="btn btn-primary">Desencriptar / Encriptar</button>
+
+            </div>
+            <div class="col-lg-5">
+                <label for="crypted">Texto Encriptado:</label><br />
+                <textarea id="crypted" name="crypted" style="width: 100%" rows="4"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#execute').click(function () {
+                // Get the input and crypted values.
+                var input = $('#input').val();
+                var crypted = $('#crypted').val();
+
+                // Alternate the values.
+                if (input) {
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/asymetric/encrypt",
+                        contentType: 'application/json',
+                        data: JSON.stringify({ value: input }),
+                        dataType: 'json'
+                    })
+                    .done(function (data) {
+                        $('#crypted').val(data);
+                        $('#input').val('');
+                    }).fail(function () {
+                        alert("error");
+                    });
+
+                }
+                else if (crypted) {
+                    $.ajax({
+                            type: "POST",
+                            url: "/api/asymetric/decrypt",
+                            contentType: 'application/json',
+                            data: JSON.stringify({ value: crypted }),
+                            dataType: 'json'
+                        })
+                        .done(function (data) {
+                            $('#input').val(data);
+                            $('#crypted').val('');
+                        }).fail(function () {
+                            alert("error");
+                        });
+                }
+            });
+        });
+    </script>
+</div>
